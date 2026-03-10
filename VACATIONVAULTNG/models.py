@@ -32,4 +32,4 @@ class Property_Listings(Base):
     images = Column(JSON)  # to contain list of url to images of a property
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

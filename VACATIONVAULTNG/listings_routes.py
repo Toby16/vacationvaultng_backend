@@ -2,7 +2,8 @@ from VACATIONVAULTNG import app
 from fastapi import (HTTPException, status)
 from VACATIONVAULTNG.routes import db_dependency
 from VACATIONVAULTNG.models import (Property_Listings)
-from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC)
+from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC,
+    UPDATE_PROPERTY_LISTING_PYDANTIC)
 
 import random, secrets, string
 
@@ -49,6 +50,61 @@ def create_property_listing(pyd_data:NEW_PROPERTY_LISTING_PYDANTIC, db: db_depen
     get_property_listing = db.query(Property_Listings).filter(
         Property_Listings.listing_id == listing_id).first()
 
+    property_listing = get_property_listing.__dict__
+    property_listing.pop("id")
+
+    return {
+        "statusCode": 200,
+        "message": "success",
+        "data": property_listing
+    }
+
+
+@app.post(base_url+"/property/listing/update", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+@app.post(base_url+"/property/listing/update/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+def edit_property_listing(pyd_data:UPDATE_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
+    property_listing_id = pyd_data.property_id
+
+    check_listing_id = db.query(Property_Listings).filter(
+        Property_Listings.listing_id == property_listing_id).first()
+    if check_listing_id is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "err": "property does not exist!",
+                "message": "try again with a valid property id!"
+        })
+
+    if pyd_data.title is not None:
+        check_listing_id.title=pyd_data.title
+    if pyd_data.description is not None:
+        check_listing_id.description=pyd_data.description
+    if pyd_data.location is not None:
+        check_listing_id.location=pyd_data.location
+    if pyd_data.property_type is not None:
+        check_listing_id.property_type=pyd_data.property_type
+    if pyd_data.bedrooms is not None:
+        check_listing_id.bedrooms=pyd_data.bedrooms
+    if pyd_data.bathrooms is not None:
+        check_listing_id.bathrooms=pyd_data.bathrooms
+    if pyd_data.max_guests is not None:
+        check_listing_id.max_guests=pyd_data.max_guests
+    if pyd_data.weeks_per_year is not None:
+        check_listing_id.weeks_per_year=pyd_data.weeks_per_year
+    if pyd_data.price is not None:
+        check_listing_id.price=pyd_data.price
+    if pyd_data.original_price is not None:
+        check_listing_id.original_price=pyd_data.original_price
+    if pyd_data.year_built is not None:
+        check_listing_id.year_built=pyd_data.original_price
+    if pyd_data.status is not None:
+        check_listing_id.status=pyd_data.status
+
+    db.commit()
+    db.refresh(check_listing_id)
+
+    get_property_listing = db.query(Property_Listings).filter(
+        Property_Listings.listing_id == property_listing_id).first()
     property_listing = get_property_listing.__dict__
     property_listing.pop("id")
 
