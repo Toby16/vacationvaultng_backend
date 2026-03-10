@@ -3,7 +3,7 @@ from fastapi import (HTTPException, status)
 from VACATIONVAULTNG.routes import db_dependency
 from VACATIONVAULTNG.models import (Property_Listings)
 from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC,
-    UPDATE_PROPERTY_LISTING_PYDANTIC)
+    UPDATE_PROPERTY_LISTING_PYDANTIC, GET_PROPERTY_LISTING_PYDANTIC)
 
 import random, secrets, string
 
@@ -62,7 +62,7 @@ def create_property_listing(pyd_data:NEW_PROPERTY_LISTING_PYDANTIC, db: db_depen
 
 @app.post(base_url+"/property/listing/update", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 @app.post(base_url+"/property/listing/update/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
-def edit_property_listing(pyd_data:UPDATE_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
+def update_property_listing(pyd_data:UPDATE_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
     property_listing_id = pyd_data.property_id
 
     check_listing_id = db.query(Property_Listings).filter(
@@ -113,3 +113,74 @@ def edit_property_listing(pyd_data:UPDATE_PROPERTY_LISTING_PYDANTIC, db: db_depe
         "message": "success",
         "data": property_listing
     }
+
+
+@app.get(base_url+"/property/listing/browse", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+@app.get(base_url+"/property/listing/browse/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+def browse_property_listings(db:db_dependency):
+    retrieve_all_listings = db.query(
+        Property_Listings.listing_id,
+        Property_Listings.title,
+        Property_Listings.description,
+        Property_Listings.location,
+        Property_Listings.property_type,
+        Property_Listings.bedrooms,
+        Property_Listings.bathrooms,
+        Property_Listings.max_guests,
+        Property_Listings.weeks_per_year,
+        Property_Listings.price,
+        Property_Listings.original_price,
+        Property_Listings.year_built,
+        Property_Listings.status,
+        Property_Listings.images,
+        Property_Listings.created_at,
+        Property_Listings.updated_at
+        ).all()
+
+    return [row._asdict() for row in retrieve_all_listings]
+
+
+@app.post(base_url+"/property/listing/get", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+@app.post(base_url+"/property/listing/get/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+def retrieve_property_listing(pyd_data: GET_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
+    property_listing_id = pyd_data.property_id
+    check_listing_id = db.query(Property_Listings).filter(
+        Property_Listings.listing_id == proeprty_listing_id).first()
+    if check_listing_id is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "err": "property does not exist!",
+                "message": "try again with a valid property id!"
+        })
+    property_listing = check_listing_id.__dict__
+    property_listing.pop("id")
+
+    return {
+        "statusCode": 200,
+        "message": "success",
+        "data": property_listing
+    }
+
+
+@app.delete(base_url+"/property/listing/delete", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+@app.delete(base_url+"/property/listing/delete/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+def delete_property_listing(pyd_data: GET_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
+    property_listing_id = pyd_data.property_id
+    check_listing_id = db.query(Property_Listings).filter(
+        Property_Listings.listing_id == proeprty_listing_id).first()
+    if check_listing_id is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "err": "property does not exist!",
+                "message": "try again with a valid property id!"
+        })
+    db.delete(check_listing_id)
+    db.commit()
+
+    return {
+        "statusCode": 200,
+        "message": "[{}] deleted successfully".format(property_listing_id)
+    }
+

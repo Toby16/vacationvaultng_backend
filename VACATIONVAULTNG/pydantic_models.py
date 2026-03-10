@@ -30,3 +30,6 @@ class UPDATE_PROPERTY_LISTING_PYDANTIC(BaseModel):
     original_price: str = Field(examples=["510000"])
     year_built: int = Field(examples=["2025"])
     status: str = Field(examples=["active"])
+
+class GET_PROPERTY_LISTING_PYDANTIC(BaseModel):
+    property_id: str = Field(examples=["2Y-ID-NCLJ5NAU"])
