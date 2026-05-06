@@ -121,46 +121,49 @@ ITEMS_PER_PAGE = 10
 @app.post(base_url+"/property/listing/browse", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 @app.post(base_url+"/property/listing/browse/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_dependency):
-    page = max(pyd_data.page, 1)  # prevent page 0 or negative
-    offset = (page - 1) * ITEMS_PER_PAGE
+    try:
+        page = max(pyd_data.page, 1)  # prevent page 0 or negative
+        offset = (page - 1) * ITEMS_PER_PAGE
 
-    # Get total count (for frontend pagination UI)
-    total_items = db.query(Property_Listings).count()
-    total_pages = ceil(total_items / ITEMS_PER_PAGE)
+        # Get total count (for frontend pagination UI)
+        total_items = db.query(Property_Listings).count()
+        total_pages = ceil(total_items / ITEMS_PER_PAGE)
     
-    if (page > total_pages) and (total_pages != 0):
-        page = total_pages
+        if (page > total_pages) and (total_pages != 0):
+            page = total_pages
 
     
-    retrieve_all_listings = db.query(
-        Property_Listings.listing_id,
-        Property_Listings.title,
-        Property_Listings.description,
-        Property_Listings.location,
-        Property_Listings.property_type,
-        Property_Listings.bedrooms,
-        Property_Listings.bathrooms,
-        Property_Listings.max_guests,
-        Property_Listings.weeks_per_year,
-        Property_Listings.price,
-        Property_Listings.original_price,
-        Property_Listings.year_built,
-        Property_Listings.status,
-        Property_Listings.images,
-        Property_Listings.created_at,
-        Property_Listings.updated_at
+        retrieve_all_listings = db.query(
+            Property_Listings.listing_id,
+            Property_Listings.title,
+            Property_Listings.description,
+            Property_Listings.location,
+            Property_Listings.property_type,
+            Property_Listings.bedrooms,
+            Property_Listings.bathrooms,
+            Property_Listings.max_guests,
+            Property_Listings.weeks_per_year,
+            Property_Listings.price,
+            Property_Listings.original_price,
+            Property_Listings.year_built,
+            Property_Listings.status,
+            Property_Listings.images,
+            Property_Listings.created_at,
+            Property_Listings.updated_at
         ).order_by(
             Property_Listings.id.desc(),
             Property_Listings.created_at.desc()
         ).offset(offset).limit(ITEMS_PER_PAGE).all()
 
-    data = {
-        "page": page,
-        "per_page": ITEMS_PER_PAGE,
-        "total_items": total_items,
-        "total_pages": total_pages,
-        "data": [row._asdict() for row in retrieve_all_listings]
-    }
+        data = {
+            "page": page,
+            "per_page": ITEMS_PER_PAGE,
+            "total_items": total_items,
+            "total_pages": total_pages,
+            "data": [row._asdict() for row in retrieve_all_listings]
+        }
+    except Exception as e:
+        raise
 
 
 @app.post(base_url+"/property/listing/get", status_code=status.HTTP_200_OK, tags=["Property Listing"])
