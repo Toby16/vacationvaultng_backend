@@ -1,0 +1,25 @@
+name: Deploy to VACATIONVAULTNG-BACKEND
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy latest updates
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{secrets.USERNAME}}
+          key: ${{secrets.KEY}}
+          script: |
+            echo '[ TRIGERRED! ]'
+            cd ~/vacationvaultng_backend
+            git push origin dev
+            git pull origin dev
+            systemctl restart vacationvault.service
+            # systemctl restart nginx
+            echo '[ DONE! ]'
