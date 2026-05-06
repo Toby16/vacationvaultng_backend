@@ -33,3 +33,6 @@ class UPDATE_PROPERTY_LISTING_PYDANTIC(BaseModel):
 
 class GET_PROPERTY_LISTING_PYDANTIC(BaseModel):
     property_id: str = Field(examples=["2Y-ID-NCLJ5NAU"])
+
+class PAGINATION_REQUEST_PYDANTIC(BaseModel):
+    page: int = 1
