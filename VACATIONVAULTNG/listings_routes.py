@@ -3,9 +3,11 @@ from fastapi import (HTTPException, status)
 from VACATIONVAULTNG.routes import db_dependency
 from VACATIONVAULTNG.models import (Property_Listings)
 from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC,
-    UPDATE_PROPERTY_LISTING_PYDANTIC, GET_PROPERTY_LISTING_PYDANTIC)
+    UPDATE_PROPERTY_LISTING_PYDANTIC, GET_PROPERTY_LISTING_PYDANTIC,
+    PAGINATION_REQUEST_PYDANTIC)
 
 import random, secrets, string
+from math import ceil
 
 base_url = "/vacation/vault/ng"
 
@@ -115,9 +117,18 @@ def update_property_listing(pyd_data:UPDATE_PROPERTY_LISTING_PYDANTIC, db: db_de
     }
 
 
+ITEMS_PER_PAGE = 10
 @app.get(base_url+"/property/listing/browse", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 @app.get(base_url+"/property/listing/browse/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
-def browse_property_listings(db:db_dependency):
+def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_dependency):
+    page = max(pyd_data.page, 1)  # prevent page 0 or negative
+    offset = (page - 1) * ITEMS_PER_PAGE
+
+    # Get total count (for frontend pagination UI)
+    total_items = db.query(Property_Listings).count()
+    total_pages = ceil(total_items / ITEMS_PER_PAGE)
+
+    
     retrieve_all_listings = db.query(
         Property_Listings.listing_id,
         Property_Listings.title,
@@ -135,9 +146,15 @@ def browse_property_listings(db:db_dependency):
         Property_Listings.images,
         Property_Listings.created_at,
         Property_Listings.updated_at
-        ).all()
+        ).offset(offset).limit(ITEMS_PER_PAGE).all()
 
-    return [row._asdict() for row in retrieve_all_listings]
+    data = {
+        "page": page,
+        "per_page": ITEMS_PER_PAGE,
+        "total_items": total_items,
+        "total_pages": total_pages,
+        "data": [row._asdict() for row in retrieve_all_listings]
+    }
 
 
 @app.post(base_url+"/property/listing/get", status_code=status.HTTP_200_OK, tags=["Property Listing"])
