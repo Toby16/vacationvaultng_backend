@@ -162,6 +162,8 @@ def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_depend
             "total_pages": total_pages,
             "data": [row._asdict() for row in retrieve_all_listings]
         }
+
+        return data
     except Exception as e:
         raise
 
