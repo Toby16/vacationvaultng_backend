@@ -127,6 +127,9 @@ def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_depend
     # Get total count (for frontend pagination UI)
     total_items = db.query(Property_Listings).count()
     total_pages = ceil(total_items / ITEMS_PER_PAGE)
+    
+    if (page > total_pages) and (total_pages != 0):
+        page = total_pages
 
     
     retrieve_all_listings = db.query(
@@ -146,6 +149,9 @@ def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_depend
         Property_Listings.images,
         Property_Listings.created_at,
         Property_Listings.updated_at
+        ).order_by(
+            Property_Listings.id.desc(),
+            Property_Listings.created_at.desc()
         ).offset(offset).limit(ITEMS_PER_PAGE).all()
 
     data = {
