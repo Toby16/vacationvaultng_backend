@@ -118,8 +118,8 @@ def update_property_listing(pyd_data:UPDATE_PROPERTY_LISTING_PYDANTIC, db: db_de
 
 
 ITEMS_PER_PAGE = 10
-@app.get(base_url+"/property/listing/browse", status_code=status.HTTP_200_OK, tags=["Property Listing"])
-@app.get(base_url+"/property/listing/browse/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+@app.post(base_url+"/property/listing/browse", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+@app.post(base_url+"/property/listing/browse/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_dependency):
     page = max(pyd_data.page, 1)  # prevent page 0 or negative
     offset = (page - 1) * ITEMS_PER_PAGE
