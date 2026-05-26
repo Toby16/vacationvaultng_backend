@@ -4,7 +4,7 @@ from VACATIONVAULTNG.routes import db_dependency
 from VACATIONVAULTNG.models import (Property_Listings)
 from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC,
     UPDATE_PROPERTY_LISTING_PYDANTIC, GET_PROPERTY_LISTING_PYDANTIC,
-    PAGINATION_REQUEST_PYDANTIC)
+    PAGINATION_REQUEST_PYDANTIC, SEARCH_PROPERTY_LISTING_PYDANTIC)
 
 import random, secrets, string
 from math import ceil
@@ -173,7 +173,7 @@ def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_depend
 def retrieve_property_listing(pyd_data: GET_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
     property_listing_id = pyd_data.property_id
     check_listing_id = db.query(Property_Listings).filter(
-        Property_Listings.listing_id == proeprty_listing_id).first()
+        Property_Listings.listing_id == property_listing_id).first()
     if check_listing_id is None:
         raise HTTPException(
             status_code=404,
@@ -211,4 +211,59 @@ def delete_property_listing(pyd_data: GET_PROPERTY_LISTING_PYDANTIC, db: db_depe
         "statusCode": 200,
         "message": "[{}] deleted successfully".format(property_listing_id)
     }
+
+@app.post(base_url+"/property/listing/search", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+@app.post(base_url+"/property/listing/search/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
+def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
+    search_by = pyd_data.search_by
+    search_input = pyd_data.search_input
+
+    search_range = ["property_id", "title", "location", "price",
+        "property_type", "bedrooms", "bathrooms", "max_guests"]
+
+    if (search_by is None) or (search_by not in search_range):
+        raise HTTPException(
+            status_code=400,
+            detail="invalid search!"
+        )
+    if search_input is None or !search_input:
+        raise HTTPException(
+            status_code=400,
+            detail="invalid search!"
+        )
+
+    data_range = ["listing_id", "title", "description", "location",
+        "property_type", "bedrooms", "bathrooms", "max_guests",
+        "weeks_per_year", "price", "original_price", "year_built",
+        "images"]
+    if search_by == "property_id":
+        # check db for property id
+        # raise 404 if not found, else return property info
+        check_property_id = db.query(Property_Listings).filter(
+        Property_Listings.listing_id == search_input).first()
+        if check_property_id is None:
+            raise HTTPException(
+                status_code=404,
+                detail="property does not exist!"
+            )
+
+        check_property = check_property_id.__dict__
+        data = {}
+        for i in data_range:
+            if i == "listing_id":
+                data["property_id"] = check_property.get(i)
+            else:
+                data[i] = check_property.get(i)
+        return {
+            "statusCode": 200,
+            "message": "success",
+            "data": data
+        }
+    else:
+        return "not developed yet"
+        
+        
+        
+        
+    
 
