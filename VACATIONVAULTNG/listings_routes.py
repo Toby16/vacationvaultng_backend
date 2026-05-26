@@ -218,8 +218,9 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
     search_by = pyd_data.search_by
     search_input = pyd_data.search_input
 
-    search_range = ["property_id", "title", "location", "price",
-        "property_type", "bedrooms", "bathrooms", "max_guests"]
+    search_range = ["property_id", "title", "location",
+    "property_type", "bedrooms", "bathrooms", "max_guests"]
+    # another endpoint will handle searching by max and min price
 
     if (search_by is None) or (search_by not in search_range):
         raise HTTPException(
@@ -258,6 +259,23 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
             "statusCode": 200,
             "message": "success",
             "data": data
+        }
+    elif search_by == "max_guests":
+        try:
+            search_input = int(search_input)
+        except:
+            raise TTPException(
+                status_code=400,
+                detail="invalid search!"
+            )
+        retrieve_max_guests = db.query(Property_Listings).filter(
+        Property_Listings.max_guests == search_input
+        ).order_by(Property_Listings.created_at.desc()
+        ).limit(15).all()  # return 15 latest proerties that matchs the max guests
+        return {
+            "statusCode": 200,
+            "message": "success",
+            "data": [row._asdict() for row in retrieve_max_guests]
         }
     else:
         return "not developed yet"
