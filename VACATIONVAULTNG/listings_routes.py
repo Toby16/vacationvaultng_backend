@@ -264,7 +264,7 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
         try:
             search_input = int(search_input)
         except:
-            raise TTPException(
+            raise HTTPException(
                 status_code=400,
                 detail="invalid search!"
             )
