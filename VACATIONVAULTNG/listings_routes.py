@@ -8,6 +8,7 @@ from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC,
 
 import random, secrets, string
 from math import ceil
+from sqlalchemy import case, func, desc, or_
 
 base_url = "/vacation/vault/ng"
 
@@ -72,10 +73,8 @@ def update_property_listing(pyd_data:UPDATE_PROPERTY_LISTING_PYDANTIC, db: db_de
     if check_listing_id is None:
         raise HTTPException(
             status_code=404,
-            detail={
-                "err": "property does not exist!",
-                "message": "try again with a valid property id!"
-        })
+            detail="property does not exist!"
+        )
 
     if pyd_data.title is not None:
         check_listing_id.title=pyd_data.title
@@ -165,7 +164,10 @@ def browse_property_listings(pyd_data: PAGINATION_REQUEST_PYDANTIC, db:db_depend
 
         return data
     except Exception as e:
-        raise
+        raise HTTPException(
+            statusCode=400,
+            detail=str(e)
+        )
 
 
 @app.post(base_url+"/property/listing/get", status_code=status.HTTP_200_OK, tags=["Property Listing"])
@@ -177,10 +179,8 @@ def retrieve_property_listing(pyd_data: GET_PROPERTY_LISTING_PYDANTIC, db: db_de
     if check_listing_id is None:
         raise HTTPException(
             status_code=404,
-            detail={
-                "err": "property does not exist!",
-                "message": "try again with a valid property id!"
-        })
+            detail="property does not exist!"
+        )
     property_listing = check_listing_id.__dict__
     property_listing.pop("id")
 
@@ -200,10 +200,8 @@ def delete_property_listing(pyd_data: GET_PROPERTY_LISTING_PYDANTIC, db: db_depe
     if check_listing_id is None:
         raise HTTPException(
             status_code=404,
-            detail={
-                "err": "property does not exist!",
-                "message": "try again with a valid property id!"
-        })
+            detail="property does not exist!"
+        )
     db.delete(check_listing_id)
     db.commit()
 
@@ -261,7 +259,7 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
         retrieve_max_guests = db.query(Property_Listings).filter(
         Property_Listings.max_guests == search_input
         ).order_by(Property_Listings.created_at.desc()
-        ).limit(15).all()  # return 15 latest proerties that matchs the max guests
+        ).limit(15).all()  # return 15 latest proerties that matches the max guests
         return {
             "statusCode": 200,
             "message": "success",
@@ -284,7 +282,7 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
         retrieve_bathrooms = db.query(Property_Listings).filter(
         Property_Listings.bathrooms == search_input
         ).order_by(Property_Listings.created_at.desc()
-        ).limit(15).all()  # return 15 latest proerties that matchs the max guests
+        ).limit(15).all()  # return 15 latest proerties that matches the bathrooms
         return {
             "statusCode": 200,
             "message": "success",
@@ -307,7 +305,7 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
         retrieve_bedrooms = db.query(Property_Listings).filter(
         Property_Listings.bedrooms == search_input
         ).order_by(Property_Listings.created_at.desc()
-        ).limit(15).all()  # return 15 latest proerties that matchs the max guests
+        ).limit(15).all()  # return 15 latest properties that matches the bedrooms
         return {
             "statusCode": 200,
             "message": "success",
@@ -319,6 +317,31 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
                 for row in retrieve_bedrooms
             ]
         }
+    elif search_by == "title":
+        search_input = search_input.split("")
+        search_input_list = [i for i in search_input.split() if len(i) > 2]
+
+        match_score = sum(
+            case(
+                (Property_Listings.title.ilike(f"%{term}%"), 1),
+                else_=0
+            )
+            for term in search_input_list
+        )
+
+        retrieve_title_search = (
+            db.query(Property_Listings, match_score.label("score")
+        ).filter(or_(
+            *[
+                Property_Listings.title.ilike(f"%{term}%")
+                for term in search_input_list
+            ]
+        )).order_by(desc("score"))   # highest matches first
+        .limit(15).all())
+
+        return retrieve_title_search
+
+        
     else:
         return "not developed yet"
         
