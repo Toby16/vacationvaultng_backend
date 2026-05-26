@@ -226,7 +226,7 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
             status_code=400,
             detail="invalid search!"
         )
-    if search_input is None or !search_input:
+    if (search_input is None) or (not search_input):
         raise HTTPException(
             status_code=400,
             detail="invalid search!"
