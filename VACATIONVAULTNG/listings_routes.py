@@ -251,14 +251,11 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
         check_property = check_property_id.__dict__
         data = {}
         for i in data_range:
-            if i == "listing_id":
-                data["property_id"] = check_property.get(i)
-            else:
-                data[i] = check_property.get(i)
+            data[i] = check_property.get(i)
         return {
             "statusCode": 200,
             "message": "success",
-            "data": data
+            "data": [data]
         }
     elif search_by == "max_guests":
         try:
