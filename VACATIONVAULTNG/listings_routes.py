@@ -233,10 +233,6 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
             detail="invalid search!"
         )
 
-    data_range = ["listing_id", "title", "description", "location",
-        "property_type", "bedrooms", "bathrooms", "max_guests",
-        "weeks_per_year", "price", "original_price", "year_built",
-        "images"]
     if search_by == "property_id":
         # check db for property id
         # raise 404 if not found, else return property info
@@ -249,13 +245,10 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
             )
 
         check_property = check_property_id.__dict__
-        data = {}
-        for i in data_range:
-            data[i] = check_property.get(i)
         return {
             "statusCode": 200,
             "message": "success",
-            "data": [data]
+            "data": [check_property]
         }
     elif search_by == "max_guests":
         try:
