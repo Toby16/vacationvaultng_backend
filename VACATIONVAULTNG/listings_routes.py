@@ -273,6 +273,52 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
                 for row in retrieve_max_guests
             ]
         }
+    elif search_by == "bathrooms":
+        try:
+            search_input = int(search_input)
+        except:
+            raise HTTPException(
+                status_code=400,
+                detail="invalid search!"
+            )
+        retrieve_bathrooms = db.query(Property_Listings).filter(
+        Property_Listings.bathrooms == search_input
+        ).order_by(Property_Listings.created_at.desc()
+        ).limit(15).all()  # return 15 latest proerties that matchs the max guests
+        return {
+            "statusCode": 200,
+            "message": "success",
+            "data": [
+                {
+                    column.name: getattr(row, column.name)
+                    for column in Property_Listings.__table__.columns
+                }
+                for row in retrieve_bathrooms
+            ]
+        }
+    elif search_by == "bedrooms":
+        try:
+            search_input = int(search_input)
+        except:
+            raise HTTPException(
+                status_code=400,
+                detail="invalid search!"
+            )
+        retrieve_bedrooms = db.query(Property_Listings).filter(
+        Property_Listings.bedrooms == search_input
+        ).order_by(Property_Listings.created_at.desc()
+        ).limit(15).all()  # return 15 latest proerties that matchs the max guests
+        return {
+            "statusCode": 200,
+            "message": "success",
+            "data": [
+                {
+                    column.name: getattr(row, column.name)
+                    for column in Property_Listings.__table__.columns
+                }
+                for row in retrieve_bedrooms
+            ]
+        }
     else:
         return "not developed yet"
         
