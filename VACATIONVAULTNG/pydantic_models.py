@@ -26,8 +26,8 @@ class UPDATE_PROPERTY_LISTING_PYDANTIC(BaseModel):
     bathrooms: int = Field(examples=["2"])
     max_guests: int = Field(examples=["3"])
     weeks_per_year: int = Field(examples=["52"])
-    price: str = Field(examples=["450000"])
-    original_price: str = Field(examples=["510000"])
+    price: str = Field(examples=["45000"])
+    original_price: str = Field(examples=["51000"])
     year_built: int = Field(examples=["2025"])
     status: str = Field(examples=["active"])
 
@@ -36,3 +36,12 @@ class GET_PROPERTY_LISTING_PYDANTIC(BaseModel):
 
 class PAGINATION_REQUEST_PYDANTIC(BaseModel):
     page: int = 1
+
+class SEARCH_PROPERTY_LISTING_PYDANTIC(BaseModel):
+    search_by: str = Field(
+        examples=[
+            "property_id", "title", "location", "property_type",
+            "bedrooms", "bathrooms", "max_guests", "price"])
+    search_input: str = Field(examples=["2Y-ID-NCLJ5NAU", "Flats in Horizon Cyberville",
+                                        "Ikate Lekki", "Flats"
+                                       ])
