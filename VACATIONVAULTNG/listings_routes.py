@@ -275,7 +275,13 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
         return {
             "statusCode": 200,
             "message": "success",
-            "data": [row._asdict() for row in retrieve_max_guests]
+            "data": [
+                {
+                    column.name: getattr(row, column.name)
+                    for column in Property_Listings.__table__.columns
+                }
+                for row in retrieve_max_guests
+            ]
         }
     else:
         return "not developed yet"
