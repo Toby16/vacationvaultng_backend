@@ -361,8 +361,7 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
                     **{
                         column.name: getattr(property_row, column.name)
                         for column in Property_Listings.__table__.columns
-                    },
-                    "score": score
+                    }
                 }
                 for property_row, score in retrieve_title_search
             ]
