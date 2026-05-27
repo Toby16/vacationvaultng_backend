@@ -318,8 +318,9 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
             ]
         }
     elif search_by == "title":
-        search_input = search_input.split("")
+        # search_input = search_input.split("")
         search_input_list = [i for i in search_input.split() if len(i) > 2]
+        return search_input_list
 
         match_score = sum(
             case(
