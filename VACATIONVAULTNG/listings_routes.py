@@ -318,8 +318,19 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
             ]
         }
     elif search_by == "title":
-        # gather words greater than length of 3
-        search_input_list = [i for i in search_input.split() if len(i) > 3]
+        search_input = search_input.strip()
+        
+        if len(search_input) < 2:
+            raise HTTPException(
+                status_code=400,
+                detail="search query too short!"
+            )
+
+        search_input_list = [
+            i.strip()
+            for i in search_input.split()
+            if i.strip()
+        ]
 
         match_score = sum(
             case(
@@ -330,14 +341,17 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
         )
 
         retrieve_title_search = (
-            db.query(Property_Listings, match_score.label("score")
-        ).filter(or_(
-            *[
-                Property_Listings.title.ilike(f"%{term}%")
-                for term in search_input_list
-            ]
-        )).order_by(desc("score"))   # highest matches first
-        .limit(15).all())
+            db.query(
+                Property_Listings,
+                match_score.label("score")
+            ).filter(
+            or_(
+                *[
+                    Property_Listings.title.ilike(f"%{term}%")
+                    for term in search_input_list
+                ]
+            )).order_by(desc("score")).limit(15).all()
+        )
 
         return {
             "statusCode": 200,
@@ -354,7 +368,6 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
             ]
         }
 
-        
     else:
         return "not developed yet"
         
