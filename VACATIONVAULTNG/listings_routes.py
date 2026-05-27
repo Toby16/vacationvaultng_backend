@@ -367,7 +367,52 @@ def search_property_listing(pyd_data: SEARCH_PROPERTY_LISTING_PYDANTIC, db: db_d
                 for property_row, score in retrieve_title_search
             ]
         }
+    elif search_by == "location":
+        search_input = search_input.strip()
 
+        if len(search_input) < 1:
+            raise HTTPException(
+                status_code=400,
+                detail="invalid search!"
+            )
+
+        search_input_list = [
+            i.strip().lower()
+            for i in search_input.split()
+            if i.strip()
+        ]
+
+        if not search_input_list:
+            raise HTTPException(
+                status_code=400,
+                detail="invalid search!"
+            )
+
+        query = db.query(Property_Listings)
+
+        # STRICT MATCH: ALL terms must exist
+        for term in search_input_list:
+            query = query.filter(
+                Property_Listings.location.ilike(f"%{term}%")
+            )
+
+        results = query.order_by(
+            Property_Listings.created_at.desc()
+        ).limit(15).all()
+
+        return {
+            "statusCode": 200,
+            "message": "success",
+            "data": [
+                {
+                    **{
+                        column.name: getattr(row, column.name)
+                        for column in Property_Listings.__table__.columns
+                    }
+                }
+                for row in results
+            ]
+        }
     else:
         return "not developed yet"
         
