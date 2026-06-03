@@ -18,23 +18,26 @@ base_url = "/vacation/vault/ng"
 @app.post(base_url+"/property/listing/new", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 @app.post(base_url+"/property/listing/new/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 def create_property_listing(
-    pyd_data:NEW_PROPERTY_LISTING_PYDANTIC,
     db: db_dependency,
+
+    # using this because i can't use pydantic with file upload
+    title: str = Form(...),
+    description: str = Form(...),
+    location: str = Form(...),
+    property_type: str = Form(...),
+
+    bedrooms: int = Form(...),
+    bathrooms: int = Form(...),
+    max_guests: int = Form(...),
+
+    weeks_per_year: int = Form(...),
+    price: str = Form(...),
+    original_price: str = Form(...),
+
+    year_built: int = Form(...),
+    status: str = Form(...),
     images: List[UploadFile] = File(...)
 ):
-    title = pyd_data.title
-    description = pyd_data.description
-    location = pyd_data.location
-    property_type = pyd_data.property_type
-    bedrooms = pyd_data.bedrooms
-    bathrooms = pyd_data.bathrooms
-    max_guests = pyd_data.max_guests
-    weeks_per_year = pyd_data.weeks_per_year
-    price = pyd_data.price
-    original_price = pyd_data.original_price
-    year_built = pyd_data.year_built
-    status = pyd_data.status
-
     image_urls = []
     for image in images:
         if not image.content_type.startswith("image/"):
