@@ -1,0 +1,94 @@
+May 27 06:59:36 srv1642265 systemd[1]: Stopping vacationvault.service - VACATIONVAULT FASTAPI APP...
+May 27 06:59:37 srv1642265 uvicorn[5756]: INFO:     Shutting down
+May 27 06:59:37 srv1642265 uvicorn[5757]: INFO:     Shutting down
+May 27 06:59:37 srv1642265 uvicorn[5754]: INFO:     Received SIGTERM, exiting.
+May 27 06:59:37 srv1642265 uvicorn[5754]: INFO:     Terminated child process [5756]
+May 27 06:59:37 srv1642265 uvicorn[5754]: INFO:     Terminated child process [5757]
+May 27 06:59:37 srv1642265 uvicorn[5754]: INFO:     Waiting for child process [5756]
+May 27 06:59:37 srv1642265 uvicorn[5756]: INFO:     Waiting for application shutdown.
+May 27 06:59:37 srv1642265 uvicorn[5756]: INFO:     Application shutdown complete.
+May 27 06:59:37 srv1642265 uvicorn[5756]: INFO:     Finished server process [5756]
+May 27 06:59:37 srv1642265 uvicorn[5757]: INFO:     Waiting for application shutdown.
+May 27 06:59:37 srv1642265 uvicorn[5757]: INFO:     Application shutdown complete.
+May 27 06:59:37 srv1642265 uvicorn[5757]: INFO:     Finished server process [5757]
+May 27 06:59:37 srv1642265 uvicorn[5754]: INFO:     Waiting for child process [5757]
+May 27 06:59:37 srv1642265 uvicorn[5754]: INFO:     Stopping parent process [5754]
+May 27 06:59:37 srv1642265 systemd[1]: vacationvault.service: Deactivated successfully.
+May 27 06:59:37 srv1642265 systemd[1]: Stopped vacationvault.service - VACATIONVAULT FASTAPI APP.
+May 27 06:59:37 srv1642265 systemd[1]: vacationvault.service: Consumed 2.832s CPU time, 119.1M memory peak, 0B memory swap peak.
+May 27 06:59:37 srv1642265 systemd[1]: Started vacationvault.service - VACATIONVAULT FASTAPI APP.
+May 27 06:59:37 srv1642265 uvicorn[5814]: INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+May 27 06:59:37 srv1642265 uvicorn[5814]: INFO:     Started parent process [5814]
+May 27 06:59:37 srv1642265 uvicorn[5818]: INFO:     Started server process [5818]
+May 27 06:59:37 srv1642265 uvicorn[5818]: INFO:     Waiting for application startup.
+May 27 06:59:37 srv1642265 uvicorn[5818]: INFO:     Application startup complete.
+May 27 06:59:37 srv1642265 uvicorn[5819]: INFO:     Started server process [5819]
+May 27 06:59:37 srv1642265 uvicorn[5819]: INFO:     Waiting for application startup.
+May 27 06:59:37 srv1642265 uvicorn[5819]: INFO:     Application startup complete.
+May 27 06:59:47 srv1642265 uvicorn[5819]: INFO:     197.211.57.47:34167 - "POST /vacation/vault/ng/property/listing/search HTTP/1.1" 200 OK
+May 27 07:00:46 srv1642265 uvicorn[5819]: INFO:     197.211.57.47:34168 - "POST /vacation/vault/ng/property/listing/search HTTP/1.1" 500 Internal Server Error
+May 27 07:00:46 srv1642265 uvicorn[5819]: ERROR:    Exception in ASGI application
+May 27 07:00:46 srv1642265 uvicorn[5819]: Traceback (most recent call last):
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+May 27 07:00:46 srv1642265 uvicorn[5819]:     result = await app(  # type: ignore[func-returns-value]
+May 27 07:00:46 srv1642265 uvicorn[5819]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     return await self.app(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1160, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await super().__call__(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/applications.py", line 107, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await self.middleware_stack(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     raise exc
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await self.app(scope, receive, _send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 95, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await self.simple_response(scope, receive, send, request_headers=headers)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 153, in simple_response
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await self.app(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     raise exc
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await app(scope, receive, sender)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await self.app(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await self.middleware_stack(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await route.handle(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await self.app(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 130, in app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     raise exc
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     await app(scope, receive, sender)
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 116, in app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     response = await f(request)
+May 27 07:00:46 srv1642265 uvicorn[5819]:                ^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 670, in app
+May 27 07:00:46 srv1642265 uvicorn[5819]:     raw_response = await run_endpoint_function(
+May 27 07:00:46 srv1642265 uvicorn[5819]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 326, in run_endpoint_function
+May 27 07:00:46 srv1642265 uvicorn[5819]:     return await run_in_threadpool(dependant.call, **values)
+May 27 07:00:46 srv1642265 uvicorn[5819]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/starlette/concurrency.py", line 32, in run_in_threadpool
+May 27 07:00:46 srv1642265 uvicorn[5819]:     return await anyio.to_thread.run_sync(func)
+May 27 07:00:46 srv1642265 uvicorn[5819]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/anyio/to_thread.py", line 63, in run_sync
+May 27 07:00:46 srv1642265 uvicorn[5819]:     return await get_async_backend().run_sync_in_worker_thread(
+May 27 07:00:46 srv1642265 uvicorn[5819]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2502, in run_sync_in_worker_thread
+May 27 07:00:46 srv1642265 uvicorn[5819]:     return await future
+May 27 07:00:46 srv1642265 uvicorn[5819]:            ^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 986, in run
+May 27 07:00:46 srv1642265 uvicorn[5819]:     result = context.run(func, *args)
+May 27 07:00:46 srv1642265 uvicorn[5819]:              ^^^^^^^^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]:   File "/root/vacationvaultng_backend/VACATIONVAULTNG/listings_routes.py", line 333, in search_property_listing
+May 27 07:00:46 srv1642265 uvicorn[5819]:     db.query(Property_Listings, match_score.label("score")
+May 27 07:00:46 srv1642265 uvicorn[5819]:                                 ^^^^^^^^^^^^^^^^^
+May 27 07:00:46 srv1642265 uvicorn[5819]: AttributeError: 'int' object has no attribute 'label'

@@ -16,9 +16,10 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-from VACATIONVAULTNG import models
+# from VACATIONVAULTNG import models
 from database import engine
-models.Base.metadata.create_all(bind=engine)
+from VACATIONVAULTNG import models
+# models.Base.metadata.create_all(bind=engine)
 
 from VACATIONVAULTNG import (routes)
 # from SECURITY import (pydantic_models, helper)
