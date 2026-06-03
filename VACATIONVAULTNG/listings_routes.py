@@ -1,6 +1,7 @@
 from VACATIONVAULTNG import app
-from fastapi import (HTTPException, status)
+from fastapi import (HTTPException, status, UploadFile, File, Form)
 from VACATIONVAULTNG.routes import db_dependency
+from VACATIONVAULTNG.helper import upload_property_image
 from VACATIONVAULTNG.models import (Property_Listings)
 from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC,
     UPDATE_PROPERTY_LISTING_PYDANTIC, GET_PROPERTY_LISTING_PYDANTIC,
@@ -9,13 +10,17 @@ from VACATIONVAULTNG.pydantic_models import (NEW_PROPERTY_LISTING_PYDANTIC,
 import random, secrets, string
 from math import ceil
 from sqlalchemy import case, func, desc, or_
+from typing import List
 
 base_url = "/vacation/vault/ng"
 
 
 @app.post(base_url+"/property/listing/new", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 @app.post(base_url+"/property/listing/new/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
-def create_property_listing(pyd_data:NEW_PROPERTY_LISTING_PYDANTIC, db: db_dependency):
+def create_property_listing(
+    pyd_data:NEW_PROPERTY_LISTING_PYDANTIC,
+    images: List[UploadFile] = File(...),
+db: db_dependency):
     title = pyd_data.title
     description = pyd_data.description
     location = pyd_data.location
@@ -28,6 +33,18 @@ def create_property_listing(pyd_data:NEW_PROPERTY_LISTING_PYDANTIC, db: db_depen
     original_price = pyd_data.original_price
     year_built = pyd_data.year_built
     status = pyd_data.status
+
+    image_urls = []
+    for image in images:
+        if not image.content_type.startswith("image/"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"{image.filename} is not an image"
+            )
+        image_url = upload_property_image(image)
+        image_urls.append(image_url)
+
+    
 
     chars = string.ascii_uppercase + string.digits
     listing_id = ''.join(random.choices(chars, k=2)) + "-ID-" + ''.join(random.choices(chars, k=8))
@@ -45,7 +62,8 @@ def create_property_listing(pyd_data:NEW_PROPERTY_LISTING_PYDANTIC, db: db_depen
         price=price,
         original_price=original_price,
         year_built=year_built,
-        status=status
+        status=status,
+        images=image_urls
     )
     db.add(new_listing)
     db.commit()
@@ -55,6 +73,7 @@ def create_property_listing(pyd_data:NEW_PROPERTY_LISTING_PYDANTIC, db: db_depen
 
     property_listing = get_property_listing.__dict__
     property_listing.pop("id")
+    property_listing.pop("_sa_instance_state", None)
 
     return {
         "statusCode": 200,
