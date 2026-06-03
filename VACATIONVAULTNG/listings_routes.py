@@ -36,7 +36,7 @@ def create_property_listing(
 
     year_built: int = Form(...),
     status: str = Form(...),
-    images: List[UploadFile] = File(...)
+    images: UploadFile = File(...)
 ):
     image_urls = []
     for image in images:
