@@ -1,4 +1,4 @@
-import cloudinary
+import cloudinary, os
 import cloudinary.uploader
 
 # [ CLOUDINARY CONFIG ]
