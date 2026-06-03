@@ -29,7 +29,7 @@ class Property_Listings(Base):
     # seller_id = Column(Text)
     # featured = Column(Boolean, default=False)
     status = Column(Text, default="active")  # "active/non-active"
-    images = Column(JSON)  # to contain list of url to images of a property
+    images = Column(JSON, nullable=True, default=list)  # to contain list of url to images of a property
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
