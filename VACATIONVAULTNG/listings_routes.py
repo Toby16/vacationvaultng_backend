@@ -19,7 +19,7 @@ base_url = "/vacation/vault/ng"
 @app.post(base_url+"/property/listing/new/", status_code=status.HTTP_200_OK, tags=["Property Listing"])
 def create_property_listing(
     pyd_data:NEW_PROPERTY_LISTING_PYDANTIC,
-    db: db_dependency
+    db: db_dependency,
     images: List[UploadFile] = File(...)
 ):
     title = pyd_data.title
